@@ -1,0 +1,48 @@
+class WordDictionary {
+    private TrieNode root;
+    
+    public WordDictionary() {
+        this.root = new TrieNode();
+    }
+    
+    public void addWord(String word) {
+        TrieNode currentNode = this.root;
+        
+        for(int i = 0; i < word.length(); ++i) {
+            if(currentNode.children[word.charAt(i) - 'a'] == null)
+                currentNode.children[word.charAt(i) - 'a'] = new TrieNode();
+            currentNode = currentNode.children[word.charAt(i) - 'a'];
+        }
+        currentNode.isWord = true;
+    }
+    
+    public boolean search(String word) {
+        return searchHelper(word, this.root, 0);
+    }
+    
+    public boolean searchHelper(String word, TrieNode node, int index) {
+        if(node == null)
+            return false;
+        
+        if(index == word.length())
+            return node.isWord;
+        
+        if(word.charAt(index) != '.' && node.children[word.charAt(index) - 'a'] != null)
+            return searchHelper(word, node.children[word.charAt(index) - 'a'], index + 1);
+        
+        boolean match = false;
+        
+        if(word.charAt(index) == '.')
+            for(int i = 0; i < 26; ++i)
+                match = match || searchHelper(word, node.children[i], index + 1);
+        
+        return match;
+    }
+    
+    private class TrieNode {
+        public TrieNode[] children = new TrieNode[26];
+        public boolean isWord;
+        
+        public TrieNode() {}
+    }
+}
